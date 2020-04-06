@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1586208157 source:c:\users\andres\documents\github\tarea-programacion-2\main.cpp
+	<iostream>
+	<cstdlib>
+	<cstdio>
+	<cstring>
+	"prototipos.h"
+	"funciones.h"
+
+1586207300 c:\users\andres\documents\github\tarea-programacion-2\prototipos.h
+
+1586208906 c:\users\andres\documents\github\tarea-programacion-2\funciones.h
+

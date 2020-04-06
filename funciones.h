@@ -84,7 +84,8 @@ void estadisticas(struct Materia *v_mat, struct EstructABC *V_ABC, float *vector
     cout<<"C. HORAS DE ACCESO POR DIA Y MATERIA EN MARZO"<<endl;
     cout<<"D. CANTIDAD DE ALUMNOS POR PROFESOR"<<endl;
     cout<<"E. DIA DE MENOS ACCESOS MARZO QUINCENA 2"<<endl;
-    cout<<"F. LISTADO ORDENADO"<<endl;
+    cout<<"F. ALUMNO CON INGRESO INDIVIDUAL MAS PROLONGADO"<<endl;
+    cout<<"G. LISTADO ORDENADO"<<endl;
     cout<<"0. VOLVER AL MENU PRINCIPAL"<<endl;
     cout<<"------------SELECCIONE UNA OPCION-------------"<<endl;
     cin>>opc;
@@ -139,7 +140,7 @@ void puntoA(Materia *v_mat, EstructABC *V_ABC)
     {
     if(V_ABC[i].accesos==false)
     {
-      cout<<"LA MATERIA "<< v_mat[i].nombre_materia <<" NO REGISTRO ACCESOS"<<endl;
+      cout<<"LA MATERIA "<< i+1 <<" NO REGISTRO ACCESOS"<<endl;
     }
     }
 }
