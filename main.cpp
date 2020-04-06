@@ -9,8 +9,6 @@
 # include<cstring>
 
 using namespace std;
-
-const int CANT=20;
 #include "prototipos.h"
 #include "funciones.h"
 
@@ -19,29 +17,10 @@ int main()
 {
     int opc;
 
-    ///Para datos de las materias
-    int numeroMaterias[CANT]={0};
-    int cantidadInscriptos[CANT]={0}; ///pongo la cantidad; cuando uso arranco de 0, termino en 19
-    int cantidadProfes[CANT]={0};
-    char nombreMaterias[CANT][30];
-    for(int i;i<CANT;i++) nombreMaterias[i][29]='\0';
-    ///LOS ARRAYS ANTERIORES  NO EXIGIAN PONER EN 0,
-    ///PERO COMO SE VA A PROBAR CON LOTES DE DATOS CHICOS LOS PONGO EN
-    ///0 PARA EVITAR ERRORES
-
-
-    ///PARA RESOLVER PUNTOS
-    ///a
-    bool accesos[CANT];
-    ///b
-    float cantidadHoras[CANT];
-    ///c
-    int  materiasDias[CANT][31];
-
-    ///PREPARO LOS VECTORES QUE NECESITAN INICIALIZARSE
-    ponerFalse(accesos, CANT);
-    ponerCeroVecF(cantidadHoras,CANT);
-    ponerCeroMatriz(materiasDias, CANT, 31);
+    Materia v_mat[CANT]={0};
+    EstructABC V_ABC[CANT]={0};
+    float vector_punto_E[16]={0};
+    struct Ingresos Ing_maxF={0};
 
     while(true){
       system("cls");
@@ -55,13 +34,13 @@ int main()
       cin>>opc;
       system("cls");
       switch(opc){
-        case 1: cargarDatosMaterias(numeroMaterias, nombreMaterias, cantidadInscriptos,cantidadProfes);
+        case 1: cargarDatosMaterias(v_mat);
                 break;
-        case 2: cargarDatosIngresos(accesos, cantidadHoras, materiasDias);
+        case 2: cargarDatosIngresos(V_ABC, vector_punto_E, &Ing_maxF, v_mat);
                 break;
-        case 3: estadisticas(numeroMaterias, accesos, cantidadHoras, materiasDias, cantidadInscriptos,cantidadProfes, nombreMaterias);
+        case 3: estadisticas(v_mat, V_ABC, vector_punto_E, &Ing_maxF);
                 break;
-        case 4: mostrarMaterias(cantidadInscriptos,cantidadProfes, nombreMaterias, numeroMaterias);
+        case 4: mostrarMaterias(v_mat);
                 break;
         default:  cout<<"OPCION INCORRECTA"<<endl;;
                 break;

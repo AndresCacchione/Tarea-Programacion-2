@@ -5,85 +5,76 @@
 
 //void cargarDatosMaterias(struct materias vMat[20]){
 
-void cargarDatosMaterias(int numeroMaterias[CANT],char nombreMaterias[20][30], int cantidadInscriptos[20], int cantidadProfes[20]){
-  int i, materia, inscriptos, profesores;
-  const int CANTIDAD=4;
-  char nombre[30];
-  for(i=0;i<CANTIDAD; i++){
+void cargarDatosMaterias(Materia *v_mat)
+{
+    int num_mat;
+    for(int i=0;i<CANT; i++)
+    {
     system("cls");
     cout<<"INGRESE EL NUMERO DE LA MATERIA: ";
-    cin>>materia;
-    numeroMaterias[materia-1]=materia;///PERMITE QUE, CON ALGUNA PEQUEÑA MODIFICACIÓN, LAS MATERIAS TENGAN NUMEROS NO CORRELATIVOS
+    cin>>num_mat;
+
     cout<<"INGRESE EL NOMBRE: ";
-    cin>>nombre;
-    strcpy(nombreMaterias[materia-1],nombre);
-
+    cin.ignore();
+    cin.getline(v_mat[num_mat-1].nombre_materia,30);
     cout<<"INGRESE LA CANTIDAD DE ALUMNOS INSCRIPTOS: ";
-    cin>>inscriptos;
-    cantidadInscriptos[materia-1]=inscriptos;
-
+    cin>>v_mat[num_mat-1].cant_alum_insc;
     cout<<"INGRESE LA CANTIDAD DE PROFESORES: ";
-    cin>>profesores;
-    cantidadProfes[materia-1]=profesores;
-
-
-  }
+    cin>>v_mat[num_mat-1].cant_profe;
+    }
 }
 
-void ponerFalse(bool v[CANT], int tam){
-  int i;
-  for(i=0;i<tam;i++){
-    v[i]=false;///0
-  }
-}
 
-void ponerCeroVecF(float v[CANT], int tam){
-  int i;
-  for(i=0;i<tam;i++){
-    v[i]=0;
-  }
-}
+void cargarDatosIngresos(struct EstructABC *V_ABC, float *vector_punto_E, Ingresos *Ing_maxF, Materia *v_mat){
+  struct Ingresos Ing;
 
-void ponerCeroMatriz(int m[CANT][31], int filas, int columnas){
-  int i,j;
-  for(i=0;i<filas;i++)
-    for(j=0;j<columnas;j++)
-      m[i][j]=0;
-
-}
-
-void cargarDatosIngresos(bool accesos[CANT], float horas[CANT], int m[CANT][31]){
-  int legajo, dia, mes, materia;
-  float tiempo;
   cout<<"INGRESE EL LEGAJO: ";
-  cin>>legajo;
-  while(legajo!=0){
+  cin>>Ing.legajo;
+  while(Ing.legajo!=0){
     cout<<"INGRESE EL DIA DE ACCESO: ";
-    cin>>dia;
+    cin>>Ing.dia_acceso;
     cout<<"INGRESE EL MES DE ACCESO: ";
-    cin>>mes;
+    cin>>Ing.mes_acceso;
     cout<<"INGRESE EL NUMERO DE MATERIA: ";
-    cin>>materia;
+    cin>>Ing.num_materia;
     cout<<"INGRESE LA CANTIDAD DE HORAS: ";
-    cin>>tiempo;
+    cin>>Ing.cant_hs;
     ///SE ALMACENAN LOS VALORES INGRESADOS EN LOS ARRAYS CORRESPONDIENTES
     ///Punto a)
-    accesos[materia-1]=true;///Se cambia el estado para indicar que la materia tuvo acceso
-    ///Punto b)
-    horas[materia-1]+=tiempo;///Se acumula la cantidad de horas para cada materia
-    ///punto c
-    if(mes==3){
-      m[materia-1][dia-1]++; ///Se cuenta la cantidad de veces que los estudiantes ingresaron
-    ///a una materia en un día en particular
-    }
-    cout<<"INGRESE EL LEGAJO: ";
-    cin>>legajo;
-  }
 
+    v_mat[Ing.num_materia-1].num_materia=Ing.num_materia;
+    V_ABC[Ing.num_materia-1].accesos=true;///Se cambia el estado para indicar que la materia tuvo acceso
+    ///Punto b)
+    V_ABC[Ing.num_materia-1].cantidadHoras+=Ing.cant_hs;///Se acumula la cantidad de horas para cada materia
+    ///punto c
+    if(Ing.mes_acceso==3)
+        {
+        V_ABC[Ing.num_materia-1].dias[Ing.dia_acceso-1]++; ///Se cuenta la cantidad de veces que los estudiantes ingresaron
+        ///a una materia en un día en particular
+
+        if(Ing.dia_acceso>15)
+        {
+            vector_punto_E[Ing.dia_acceso-16]+=Ing.cant_hs;
+        }
+    }
+    *Ing_maxF = may_acceso(Ing_maxF, &Ing);
+
+
+    cout<<"INGRESE EL LEGAJO: ";
+    cin>>Ing.legajo;
+  }
 }
 
-void estadisticas(int numMaterias[], bool accesos[], float horas[CANT], int m[CANT][31], int *cantAlus, int *cantProfes,
-                  char nombreMaterias[20][30]){
+struct Ingresos may_acceso(Ingresos *Ing_maxF,Ingresos *Ing)
+{
+    if((*Ing).cant_hs>(*Ing_maxF).cant_hs)
+    {
+        *Ing_maxF=*Ing;
+    }
+return *Ing_maxF;
+};
+
+void estadisticas(struct Materia *v_mat, struct EstructABC *V_ABC, float *vector_punto_E, Ingresos *Ing_maxF){
   char opc;
   while(true){
     system("cls");
@@ -101,27 +92,32 @@ void estadisticas(int numMaterias[], bool accesos[], float horas[CANT], int m[CA
     switch(opc){
       case 'A':
       case 'a':
-                puntoA(accesos, nombreMaterias);
+                puntoA(v_mat, V_ABC);
                 break;
       case 'B':
       case 'b':
-                puntoB(horas);
+                puntoB(V_ABC);
                 break;
       case 'C':
       case 'c':
-                puntoC(m);
+                puntoC(V_ABC);
                 break;
       case 'D':
       case 'd':
-                puntoD(cantAlus, cantProfes);
+                puntoD(v_mat);
                 break;
       case 'E':
       case 'e':
-                puntoE();
+                puntoE(vector_punto_E, 16);
                 break;
       case 'F':
       case 'f':
-                puntoF(numMaterias, cantAlus, cantProfes, nombreMaterias);
+                puntoF(Ing_maxF);
+                break;
+
+      case 'G':
+      case 'g':
+                puntoG(v_mat);
                 break;
 
 
@@ -137,117 +133,145 @@ void estadisticas(int numMaterias[], bool accesos[], float horas[CANT], int m[CA
 
 ///FUNCIONES PARA RESOLVER LOS PUNTOS
 
-void puntoA(bool *accesos,char nombre_materia[CANT][30]){
-  int i;
-  for(i=0;i<CANT;i++){
-    if(accesos[i]==false){
-      cout<<"LA MATERIA "<<i+1<<" NO REGISTRO ACCESOS"<<endl;
-
+void puntoA(Materia *v_mat, EstructABC *V_ABC)
+{
+  for(int i=0;i<CANT;i++)
+    {
+    if(V_ABC[i].accesos==false)
+    {
+      cout<<"LA MATERIA "<< v_mat[i].nombre_materia <<" NO REGISTRO ACCESOS"<<endl;
     }
-    ///¿QUE HARÍA FALTA PARA QUE MUESTRE EL NOMBRE DE LA MATERIA?
-  }
+    }
 }
 
 
 ///PUNTOS A RESOLVER. DEJE LAS FUNCIONES VACIAS (SOLO {}) PARA QUE EL PROGRAMA COMPILE
-void puntoB(float *horas){
-  int materiaMaxima=calcularMaximo(horas, 20)+1;
+void puntoB(struct EstructABC *V_ABC){
+  int materiaMaxima=calcularMaximo(V_ABC, CANT)+1;
   cout<<"LA MATERIA CON MAYOR CANTIDAD DE HORAS ES: "<<materiaMaxima<<endl;
   system("pause");
 }
 
-int calcularMaximo(float *horas, int tam){
-  int i, posMax=0;
-  for(i=1;i<tam;i++){
-    if(horas[i]>horas[posMax]){
+int calcularMaximo(struct EstructABC *V_ABC, int tam){
+  int posMax=0;
+  for(int i=1;i<tam;i++){
+    if(V_ABC[i].cantidadHoras>V_ABC[posMax].cantidadHoras){
         posMax=i;
     }
   }
   return posMax;
 }
 
-void puntoC(int m[CANT][31]){
-  int i, j;
-  for(i=0;i<CANT;i++){
+void puntoC(EstructABC *V_ABC){
+
+  for(int i=0;i<CANT;i++){
       cout<<"PARA LA MATERIA: "<<i+1<<endl;
-    for(j=0;j<31;j++){
-      cout<<"DIA: "<<j+1<<"\t"<<"CANTIDAD DE ACCESOS: "<<m[i][j]<<endl;
+    for(int j=0;j<31;j++){
+      cout<<"DIA: "<<j+1<<"\t"<<"CANTIDAD DE ACCESOS: "<<V_ABC[i].dias[j]<<endl;
     }
   system("pause");
   }
 }
 
-void puntoD(int *cA, int *cP){
-  int i;
-  for(i=0;i<CANT;i++){
-    if(cP[i]!=0){
+void puntoD(Materia *v_mat){
+
+  for(int i=0;i<CANT;i++){
+    if(v_mat[i].cant_profe!=0){
         cout<<"MATERIA: "<<i+1<<"\t";
-      cout<<"ALUMNOS POR PROFESOR: "<<(float) cA[i]/cP[i]<<endl;
+      cout<<"ALUMNOS POR PROFESOR: "<<(float) v_mat[i].cant_alum_insc/v_mat[i].cant_profe<<endl;
     }
   }
+}
 
-}
-void puntoE(){
-  cout<<"A HACERLO!!!"<<endl;
-}
-/*void puntoE(float *v, int tam){
+void puntoE(float *vector_punto_E, int tam)
+{
   int diaMin;
-  diaMin=calcularMinimoSinCero(v,tam)+16;
+  diaMin = calcularMinimoSinCero(vector_punto_E, tam)+16;
+  if(diaMin==15)
+  {
+      cout<<"NO HUBO INGRESOS EN LA QUINCENA"<<endl;
+  }
   cout<<"EL DIA DE MENOS INGRESOS FUE: "<<diaMin<<endl;
   system("pause");
-  }
 }
-*/
 
-void puntoF(int *numeroMateria, int *cantAlus, int *cantProfes, char nombreMaterias[20][30]){
+
+int calcularMinimoSinCero(float *vector_punto_E, int tam)
+{
+    bool primer_minimo=true;
+    int pos_min=-1;
+    for(int i=0; i<tam;i++)
+    {
+        if(vector_punto_E[i]>0)
+        {
+            if(primer_minimo || (vector_punto_E[i] < vector_punto_E[pos_min]))
+            {
+                pos_min=i;
+                primer_minimo=false;
+            }
+        }
+    }
+return pos_min;
+}
+
+
+void puntoF(Ingresos *Ing_maxF)
+{
+    cout<<"El ingreso individual de mayor duracion fue realizado por el legajo "<<(*Ing_maxF).legajo << endl;
+    cout<<"Y fue realizado el dia "<< (*Ing_maxF).dia_acceso << "/"<< (*Ing_maxF).mes_acceso<<endl;
+}
+
+
+void puntoG(Materia *v_mat)
+{
+  Materia v_mat_ordenar[CANT];
+  copiar(v_mat,v_mat_ordenar);
+
   int i, j, posMax;
-  int auxProfe, auxAlu, auxNumero;
-  char auxMateria[30];
-  for(i=0;i<CANT-1;i++){
+  Materia aux;
+  for(i=0;i<CANT-1;i++)
+    {
     posMax=i;
     for(j=i+1;j<CANT;j++){
-      if(cantAlus[j]>cantAlus[posMax]){
+      if(v_mat_ordenar[j].cant_alum_insc > v_mat_ordenar[posMax].cant_alum_insc){
         posMax=j;///SE HALLA LA POSICIÓN DEL MÁXIMO EN EL VECTOR
       }
     }
       ///SE REALIZAN LOS INTERCAMBIOS PARA ORDENAR LOS 3 ARRAYS
-      if(numeroMateria[i]!=0){///para que ignore los valores no ingresados
-        auxNumero=numeroMateria[i];
-        numeroMateria[i]=numeroMateria[posMax];
-        numeroMateria[posMax]=auxNumero;
-
-        auxAlu=cantAlus[i];
-        cantAlus[i]=cantAlus[posMax];
-        cantAlus[posMax]=auxAlu;
-
-        auxProfe=cantProfes[i];
-        cantProfes[i]=cantProfes[posMax];
-        cantProfes[posMax]=auxProfe;
-
-        strcpy(auxMateria, nombreMaterias[i]);
-        strcpy(nombreMaterias[i], nombreMaterias[posMax]);
-        strcpy(nombreMaterias[posMax], auxMateria);
+      if(v_mat_ordenar[i].num_materia!=0)
+        {///para que ignore los valores no ingresados
+        aux=v_mat_ordenar[i];
+        v_mat_ordenar[i]=v_mat_ordenar[posMax];
+        v_mat_ordenar[posMax]=aux;
         }
     }
-  mostrarMaterias(cantAlus, cantProfes, nombreMaterias, numeroMateria);
+  mostrarMaterias(v_mat_ordenar);
 
 }
 
-void mostrarMaterias(int cantAlus[20], int cantProfes[20], char nombreMaterias[][30],  int *nMat){
+
+void copiar(Materia *v_mat,Materia *v_mat_ordenar)
+{
+    for(int i=0; i<CANT;i++)
+    {
+        v_mat_ordenar[i]=v_mat[i];
+    }
+}
+
+
+void mostrarMaterias(Materia *v_mat)
+{
   int i;
-  for(i=0;i<CANT;i++){
-  if(nMat[i]!=0){
-    cout<<"NUMERO DE MATERIA: "<<nMat[i]<<"\t";
-    cout<<"NOMBRE MATERIA: "<<nombreMaterias[i]<<endl;
-    cout<<"CANTIDAD DE ALUMNOS: "<<cantAlus[i]<<"\t CANTIDAD DE PROFESORES: "<<cantProfes[i]<<endl;
+  for(i=0;i<CANT;i++)
+  {
+  if(v_mat[i].num_materia!=0)
+  {
+    cout<<"NUMERO DE MATERIA: "<<v_mat[i].num_materia<<"\t";
+    cout<<"NOMBRE MATERIA: " << v_mat[i].nombre_materia <<endl;
+    cout<<"CANTIDAD DE ALUMNOS: "<<v_mat[i].cant_alum_insc<<"\t CANTIDAD DE PROFESORES: "<<v_mat[i].cant_profe<<endl;
     system("pause");
    }
   }
-
-
 }
-
-
-
 
 #endif // FUNCIONES_H_INCLUDED
